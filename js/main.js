@@ -41,7 +41,8 @@ const searchDelayEls =[...searchWraplEl.querySelectorAll('li')]
 searchStarEl.addEventListener('click',function(){
   showSearch();
 });
-searchCloserEl.addEventListener('click',function(){
+searchCloserEl.addEventListener('click',function(event){
+  event.stopPropagation()
   hideSearch();
 });
 searchShadowEl.addEventListener('click',function(){
@@ -50,7 +51,7 @@ searchShadowEl.addEventListener('click',function(){
 
 function showSearch(){
   headerEl.classList.add('searching');
-  document.documentElement.classList.add('fixed'); //최상위 -> html
+  stopScroll()
   headerMenuEls.reverse().forEach(function(el,index){
     el.style.transitionDelay = index * .4/ headerMenuEls.length + 's'
     //headerMenuEls의 젤 끝부터 점차 없어지는거
@@ -65,7 +66,7 @@ function showSearch(){
 
 function hideSearch(){
   headerEl.classList.remove('searching');
-  document.documentElement.classList.remove('fixed');
+  playScroll()
   headerMenuEls.reverse().forEach(function(el,index){
     el.style.transitionDelay = index * .4/ headerMenuEls.length + 's'
   })
@@ -75,6 +76,48 @@ function hideSearch(){
   searchDelayEls.reverse();
   searchInputEl.value='';
 }
+function playScroll(){
+  document.documentElement.classList.remove('fixed'); //최상위 -> html
+}
+function stopScroll(){
+  document.documentElement.classList.add('fixed'); //최상위 -> html
+}
+
+// 헤더 메뉴 토글!
+const menuStarterEl = document.querySelector('header .menu-starter');
+menuStarterEl.addEventListener('click',function(){
+  if(headerEl.classList.contains('menuing')){
+    headerEl.classList.remove('menuing')
+    searchInputEl.value='';
+    playScroll()
+  }
+  else{
+    headerEl.classList.add('menuing')
+    stopScroll()
+  }
+})
+
+// 헤더 검색!
+const searchTextFieldEl =document.querySelector('header .textfield')
+const searchCancelEl = document.querySelector('header .search-canceler')
+
+searchTextFieldEl.addEventListener('click',function(){
+  headerEl.classList.add('searching--mobile')
+  searchTextFieldEl.focus()
+})
+searchCancelEl.addEventListener('click',function(){
+  headerEl.classList.remove('searching--mobile')
+})
+
+//
+window.addEventListener('resize',function(){
+  if(window.innerWidth<=740){
+    headerEl.classList.remove('searching')
+  }else{
+    headerEl.classList.remove('searching--mobile')
+  }
+})
+
 
 //요소의 가시성 관찰
 const io = new IntersectionObserver(function(entries){
