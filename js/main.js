@@ -117,7 +117,32 @@ window.addEventListener('resize',function(){
     headerEl.classList.remove('searching--mobile')
   }
 })
+//
+const navEl = document.querySelector('nav')
+const navMenuToggleEl=navEl.querySelector('.menu-toggler')
+const navMenuShadowEl = navEl.querySelector('.shadow')
+navMenuToggleEl.addEventListener('click',function(){
+  if(navEl.classList.contains('menuing')){
+    hideNavMenu()
+  }else{
+    showNavMenu()
+  }
+})
 
+navEl.addEventListener('click',function(event){
+  event.stopPropagation()
+})  
+navMenuShadowEl.addEventListener('click',hideNavMenu)
+
+window.addEventListener('click',function(){
+  hideNavMenu()
+})
+function showNavMenu(){
+  navEl.classList.add('menuing')
+}
+function hideNavMenu(){
+  navEl.classList.remove('menuing')
+}
 
 //요소의 가시성 관찰
 const io = new IntersectionObserver(function(entries){
@@ -195,6 +220,7 @@ navigations.forEach(function(nav){
   mapEl.innerHTML = /*html*/`
     <h3>
       <span class="text">${nav.title}</span>
+      <span class="icon">+<span>
     </h3>
     <ul>
       ${mapList}
@@ -206,3 +232,11 @@ navigations.forEach(function(nav){
 
 const year = document.querySelector('footer .this-year');
 year.textContent = new Date().getFullYear();
+
+const mapEls = document.querySelectorAll('footer .map');
+mapEls.forEach(function(map){
+  const h3El = map.querySelector('h3')
+  h3El.addEventListener('click',function(){
+    map.classList.toggle('active');
+  })
+})
